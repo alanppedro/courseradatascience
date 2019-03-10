@@ -1,0 +1,30 @@
+dados <- read.table("c:/rdatas/household_power_consumption.txt",head=TRUE,sep=";")
+library(lubridate)
+datas <- dmy(dados$Date)
+lista <- datas>=dmy("01/02/2007")&datas<=dmy("02/02/2007")
+novosdados <- subset(dados, lista)
+newsubmet1 <- as.numeric(as.character(novosdados$Sub_metering_1))
+newsubmet2 <- as.numeric(as.character(novosdados$Sub_metering_2))
+newsubmet3 <- as.numeric(as.character(novosdados$Sub_metering_3))
+grp <- as.numeric(as.character(novosdados$Global_reactive_power))
+voltage <- as.numeric(as.character(novosdados$Voltage))
+z <- data.frame(gap = as.numeric(as.character(novosdados$Global_active_power)), marcador = ((hour(hms(novosdados$Time))*60)+minute(hms(novosdados$Time)))+(as.numeric(day(dmy(novosdados$Date))-1)*1440)   )
+
+png(filename="c:/rdatas/file04.png")
+par(mfrow=c(2,2))
+
+plot(z$gap,type="l", xaxt="n", ylab="Global Active Power")
+axis(1, at=c(0,1440,2880),labels = c("Thu","Fri","Sat"))
+
+plot(voltage, type="l", xaxt="n", ylab="Voltage")
+axis(1, at=c(0,1440,2880),labels = c("Thu","Fri","Sat"))
+
+plot(newsubmet1,type="l", xaxt="n", , ylab="Energy Sub Metering")
+axis(1, at=c(0,1440,2880),labels = c("Thu","Fri","Sat"))
+points(newsubmet2,type="l", xaxt="n", col="red")
+points(newsubmet3,type="l", xaxt="n", col="blue")
+legend("topright", null, c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), col = c("black", "red", "blue"), text.col = c("black", "red", "blue"), lty = c(1, 1, 1), merge=TRUE)
+
+plot(grp, type="l", xaxt="n", ylab="Global Reactive Power")
+axis(1, at=c(0,1440,2880),labels = c("Thu","Fri","Sat"))
+dev.off()
